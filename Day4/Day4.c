@@ -1,85 +1,88 @@
 #include <stdio.h>
 #include <string.h>
 
-int readDiagonal(int argc, char **argv) {
-  int ret = 0;
-  int line = 1;
-  int len;
-  len = strlen(argv[line]);
-  while (line < argc) {
-    for (int i = 0; i < len; i++) {
-      if (((line + 3) < argc) && ((i + 3) < len) && (argv[line][i] == 'X') &&
-          (argv[line + 1][i + 1] == 'M') && (argv[line + 2][i + 2] == 'A') &&
-          (argv[line + 3][i + 3] == 'S')) {
-        ret++;
-      }
-      if ((line + 3) < argc && ((i + 3) < len) && (argv[line][i] == 'S') &&
-          (argv[line + 1][i + 1] == 'A') && (argv[line + 2][i + 2] == 'M') &&
-          (argv[line + 3][i + 3] == 'X')) {
-        ret++;
-      }
-      if (((line - 3) > 0) && ((i - 3) >= 0) && (argv[line][i] == 'X') &&
-          (argv[line - 1][i - 1] == 'M') && (argv[line - 2][i - 2] == 'A') &&
-          (argv[line - 3][i - 3] == 'S')) {
-        ret++;
-      }
-      if (((line - 3) > 0) && ((i - 3) >= 0) && (argv[line][i] == 'S') &&
-          (argv[line - 1][i - 1] == 'A') && (argv[line - 2][i - 2] == 'M') &&
-          (argv[line - 3][i - 3] == 'X')) {
-        ret++;
-      }
-    }
-    line++;
-  }
-  return (ret);
+int isXmas(char m, char a, char s) {
+  return (m == 'M' && a == 'A' && s == 'S');
 }
 
-int readVertical(int argc, char **argv) {
-  int ret = 0;
-  int line = 1;
-  int len;
-  len = strlen(argv[line]);
-  for (int i = 0; i < len; i++) {
-    line = 1;
-    while (line < argc) {
-      if ((line + 3 < argc) && (argv[line][i] == 'X') &&
-          (argv[line + 1][i] == 'M') && (argv[line + 2][i] == 'A') &&
-          (argv[line + 3][i] == 'S')) {
-        ret++;
-      }
-      if ((line + 3 < argc) && (argv[line][i] == 'S') &&
-          (argv[line + 1][i] == 'A') && (argv[line + 2][i] == 'M') &&
-          (argv[line + 3][i] == 'X')) {
-        ret++;
-      }
-      line++;
-    }
-  }
-  return (ret);
-}
-
-int readHorizontal(char *str) {
-  int ret = 0;
-
-  while (*str) {
-    if (!strncmp(str, "XMAS", 4) || !strncmp(str, "SAMX", 4)) {
-      ret++;
-    }
-    str++;
-  }
-  return (ret);
+int isXXmas(char s, char a, char m, char s1) {
+  return (s == 'S' && a == 'A' && m == 'M' && s1 == 'S');
 }
 
 int main(int argc, char **argv) {
-  long long int total = 0;
-  int contLines = 1;
-  while (contLines < argc) {
-    total += readHorizontal(argv[contLines]);
-    contLines++;
+  int ret = 0;
+  int mas = 0;
+  int vert = 0, hor = 0;
+  int len = strlen(argv[1]);
+  for (int i = 1; i < argc; i++) {
+    for (int j = 0; j < len; j++) {
+      if (argv[i][j] == 'X') {
+        //
+        if ((j + 3) < len) {
+          hor += isXmas(argv[i][j + 1], argv[i][j + 2], argv[i][j + 3]);
+        }
+        //
+        if ((j - 3) >= 0) {
+          hor += isXmas(argv[i][j - 1], argv[i][j - 2], argv[i][j - 3]);
+        }
+        //
+        if ((i + 3) < argc) {
+          vert += isXmas(argv[i + 1][j], argv[i + 2][j], argv[i + 3][j]);
+        }
+        //
+        if ((i - 3) >= 1) {
+          vert += isXmas(argv[i - 1][j], argv[i - 2][j], argv[i - 3][j]);
+        }
+        //
+        if (((i + 3) < argc) && ((j + 3) < len)) {
+          ret += isXmas(argv[i + 1][j + 1], argv[i + 2][j + 2],
+                        argv[i + 3][j + 3]);
+        }
+        //
+        if (((i - 3) >= 1) && ((j - 3) >= 0)) {
+          ret += isXmas(argv[i - 1][j - 1], argv[i - 2][j - 2],
+                        argv[i - 3][j - 3]);
+        }
+        //
+        if (((i + 3) < argc) && ((j - 3) >= 0)) {
+          ret += isXmas(argv[i + 1][j - 1], argv[i + 2][j - 2],
+                        argv[i + 3][j - 3]);
+        }
+        //
+        if (((i - 3) >= 1) && ((j + 3) < len)) {
+          ret += isXmas(argv[i - 1][j + 1], argv[i - 2][j + 2],
+                        argv[i - 3][j + 3]);
+        }
+      }
+
+      if (argv[i][j] == 'M') {
+        // Normal
+        if (((i + 2) < argc) && ((j + 2) < len)) {
+          mas += isXXmas(argv[i][j + 2], argv[i + 1][j + 1], argv[i + 2][j],
+                         argv[i + 2][j + 2]);
+          mas += isXXmas(argv[i + 2][j], argv[i + 1][j + 1], argv[i][j + 2],
+                         argv[i + 2][j + 2]);
+        }
+        // Espejo
+        /*
+        if (((i - 2) >= 1) && ((j - 2) >= 0)) {
+          mas += isXXmas(argv[i][j - 2], argv[i - 1][j - 1], argv[i - 2][j],
+                         argv[i - 2][j - 2]);
+        }
+        */
+        //
+        if (((i + 2) < argc) && ((j - 2) >= 0)) {
+          mas += isXXmas(argv[i][j - 2], argv[i + 1][j - 1], argv[i + 2][j],
+                         argv[i + 2][j - 2]);
+        }
+        //
+        if (((i - 2) >= 1) && ((j + 2) < len)) {
+          mas += isXXmas(argv[i - 2][j], argv[i - 1][j + 1], argv[i][j + 2],
+                         argv[i - 2][j + 2]);
+        }
+      }
+    }
   }
-  printf("Horizontal = %d\n", total);
-  total += readVertical(argc, argv);
-  printf("Horizontal + vertical = %d\n", total);
-  total += readDiagonal(argc, argv);
-  printf("Horizontal + vertical + diagonal = %d\n", total);
+  printf("%d\n", ret + vert + hor);
+  printf("%d\n", mas);
 }
