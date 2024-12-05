@@ -71,7 +71,7 @@ int readHorizontal(char *str) {
 }
 
 int main(int argc, char **argv) {
-  int total = 0;
+  long long int total = 0;
   int contLines = 1;
   while (contLines < argc) {
     total += readHorizontal(argv[contLines]);
