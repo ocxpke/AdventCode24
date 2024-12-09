@@ -69,16 +69,14 @@ void reorder(long long *full_arr, long long full_len) {
 }
 
 void reorderV2(long long *cpy_arr, long long full_len, t_nums *list) {
-  long long int back = full_len - 1;
   long long int front = 0;
   int len_space;
-  int cpy_back;
-  t_nums *iter;
   int found;
+  t_nums *iter;
   while (front < full_len) {
     found = 0;
-    iter = list;
     len_space = 0;
+    iter = list;
     find_empty(cpy_arr, &front, full_len);
     while ((front + len_space < full_len) && cpy_arr[front + len_space] == -1) {
       len_space++;
@@ -90,9 +88,6 @@ void reorderV2(long long *cpy_arr, long long full_len, t_nums *list) {
         iter = iter->next;
     }
     if (iter) {
-      while (back >= 0 && cpy_arr[back] != iter->iden) {
-        back--;
-      }
       for (int i = 0; i < iter->len; i++) {
         cpy_arr[front + i] = iter->iden;
       }
@@ -108,7 +103,6 @@ long long int fin_sum(long long *full_arr, long long full_len) {
   long long int ret = 0;
   int cont = 0;
   for (long long i = 0; i < full_len; i++) {
-    // printf("%d * %d\n", cont, full_arr[i] - '0');
     if (full_arr[i] != -1)
       ret += (cont * (full_arr[i]));
     cont++;
@@ -116,9 +110,6 @@ long long int fin_sum(long long *full_arr, long long full_len) {
   return (ret);
 }
 
-/**
- * Limpiar array + ver bien funcion reorderV2
- */
 void clean_arr(long long *cpy_arr, long long full_len, t_nums *list) {
   int back;
   while (list) {
